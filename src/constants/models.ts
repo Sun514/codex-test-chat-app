@@ -6,6 +6,16 @@ export interface ChatModel {
 
 export const availableModels: ChatModel[] = [
   {
+    name: 'gemma3',
+    label: 'Gemma 3',
+    description: 'Gemma 3 model for efficient and helpful responses.'
+  },
+  {
+    name: 'qwen3:4b',
+    label: 'Qwen 3 4B',
+    description: 'Qwen 3 4B model optimized for performance and quality.'
+  },
+  {
     name: 'llama3.2',
     label: 'Llama 3.2',
     description: 'Latest Llama chat model tuned for helpful responses.'
