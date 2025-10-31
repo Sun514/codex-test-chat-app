@@ -5,9 +5,7 @@
         <i :class="iconClass"></i>
         <span>{{ label }}</span>
       </div>
-      <p :class="contentClass">
-        {{ message.content }}
-      </p>
+      <div :class="contentClass" v-html="renderedContent"></div>
     </div>
   </article>
 </template>
@@ -16,6 +14,7 @@
 import { computed } from 'vue';
 
 import type { ChatMessage } from '@/types/chat';
+import { renderMarkdown } from '@/services/markdownService';
 
 const props = defineProps<{
   message: ChatMessage;
@@ -64,10 +63,12 @@ const iconClass = computed(() =>
 
 const contentClass = computed(() =>
   [
-    'whitespace-pre-wrap',
+    'markdown-body',
     'text-sm',
     'leading-6',
-    isUser.value ? 'text-white' : 'text-surface-900'
+    isUser.value ? 'markdown-body--inverse text-white' : 'text-surface-900'
   ].join(' ')
 );
+
+const renderedContent = computed(() => renderMarkdown(props.message.content));
 </script>
