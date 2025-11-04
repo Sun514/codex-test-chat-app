@@ -12,8 +12,8 @@
     />
     <Button
       type="submit"
-      label="Send"
       icon="pi pi-send"
+      aria-label="Send message"
       :disabled="disabled || !draft.trim()"
       class="h-12 w-full sm:w-auto"
     />
