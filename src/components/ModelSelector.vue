@@ -30,7 +30,7 @@ import { computed } from 'vue';
 import Dropdown from 'primevue/dropdown';
 
 import type { ChatModel } from '@/constants/models';
-import { availableModels, modelLookup } from '@/constants/models';
+import { fallbackModels } from '@/constants/models';
 
 const props = defineProps<{
   modelValue: string;
@@ -42,7 +42,16 @@ const emit = defineEmits<{
   'update:modelValue': [value: string];
 }>();
 
-const options = computed(() => props.models ?? availableModels);
+const options = computed(() =>
+  props.models && props.models.length > 0 ? props.models : fallbackModels
+);
+
+const optionLookup = computed(() =>
+  options.value.reduce((accumulator, model) => {
+    accumulator[model.name] = model;
+    return accumulator;
+  }, {} as Record<string, ChatModel>)
+);
 
 const selected = computed({
   get: () => props.modelValue,
@@ -50,6 +59,6 @@ const selected = computed({
 });
 
 function displayLabel(value: string) {
-  return modelLookup[value]?.label ?? value;
+  return optionLookup.value[value]?.label ?? value;
 }
 </script>

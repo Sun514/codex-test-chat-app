@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 
-import { defaultModel } from '@/constants/models';
+import { fallbackDefaultModel } from '@/constants/models';
 import type { ChatMessage } from '@/types/chat';
 
 import { createMessageId, requestChatCompletion } from '@/services/chatService';
@@ -16,7 +16,7 @@ interface ChatState {
 export const useChatStore = defineStore('chat', {
   state: (): ChatState => ({
     messages: [],
-    selectedModel: defaultModel,
+    selectedModel: fallbackDefaultModel,
     isLoading: false,
     error: null,
     abortController: null

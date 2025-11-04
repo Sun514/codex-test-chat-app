@@ -9,7 +9,10 @@ module.exports = {
           200: '#e2e8f0',
           600: '#475569',
           900: '#0f172a'
-        }
+        },
+        'brand-indigo': '#2E2A5B',
+        'brand-teal': '#34DCCC',
+        'brand-sand': '#F4DBA0'
       }
     }
   },

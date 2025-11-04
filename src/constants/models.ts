@@ -4,7 +4,7 @@ export interface ChatModel {
   description: string;
 }
 
-export const availableModels: ChatModel[] = [
+const fallbackModelSeed: ChatModel[] = [
   {
     name: 'gemma3:4b',
     label: 'Gemma 3 4B',
@@ -22,12 +22,35 @@ export const availableModels: ChatModel[] = [
   }
 ];
 
-export const defaultModel = availableModels[0]?.name ?? 'llama2';
+export const fallbackModels: ChatModel[] = [...fallbackModelSeed];
 
-export const modelLookup: Record<string, ChatModel> = availableModels.reduce(
+export const fallbackDefaultModel = fallbackModels[0]?.name ?? 'llama2';
+
+export const fallbackModelLookup: Record<string, ChatModel> = fallbackModels.reduce(
   (accumulator, model) => {
     accumulator[model.name] = model;
     return accumulator;
   },
   {} as Record<string, ChatModel>
 );
+
+export function toChatModel(name: string): ChatModel {
+  if (fallbackModelLookup[name]) {
+    return fallbackModelLookup[name];
+  }
+
+  return {
+    name,
+    label: formatModelLabel(name),
+    description: 'Local Ollama model'
+  };
+}
+
+function formatModelLabel(name: string): string {
+  const cleaned = name.replace(/[:._-]/g, ' ');
+  return cleaned
+    .split(' ')
+    .filter(Boolean)
+    .map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1))
+    .join(' ');
+}

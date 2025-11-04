@@ -30,7 +30,7 @@ export class OllamaClientError extends Error {
 
 const FALLBACK_BASE_URL = 'http://localhost:11434';
 
-function resolveBaseUrl() {
+export function resolveBaseUrl() {
   const raw = import.meta.env.VITE_OLLAMA_BASE_URL;
   if (!raw) {
     return FALLBACK_BASE_URL;
@@ -44,6 +44,39 @@ export function toOllamaMessages(history: ChatMessage[]): OllamaChatMessage[] {
     role,
     content
   }));
+}
+
+interface OllamaModelsResponse {
+  data?: Array<{
+    id: string;
+    object?: string;
+    created?: number;
+    owned_by?: string;
+  }>;
+}
+
+export async function listModels(signal?: AbortSignal): Promise<string[]> {
+  const response = await fetch(`${resolveBaseUrl()}/v1/models`, {
+    method: 'GET',
+    signal
+  });
+
+  if (!response.ok) {
+    const detail = await safeReadJson(response);
+    const message =
+      typeof detail?.error === 'string'
+        ? detail.error
+        : `Failed to load models (status ${response.status})`;
+    throw new OllamaClientError(message, response.status);
+  }
+
+  const payload = (await response.json()) as OllamaModelsResponse;
+
+  return (
+    payload.data
+      ?.map((entry) => entry.id)
+      .filter((id): id is string => typeof id === 'string' && id.length > 0) ?? []
+  );
 }
 
 export async function chat(

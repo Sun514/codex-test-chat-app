@@ -1,0 +1,18 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <clipPath id="glyphwaveCircleClip">
+      <circle cx="24" cy="24" r="24" />
+    </clipPath>
+  </defs>
+  <g clip-path="url(#glyphwaveCircleClip)">
+    <circle cx="24" cy="24" r="24" fill="#F4DBA0" />
+    <path d="M0 0H48V20L0 34V0Z" fill="#2E2A5B" />
+    <path
+      d="M8.5 28.5C13.8 23.5 20.2 23.5 26 27.8C31.8 32.1 35.6 32 39.5 27.8C41.5 25.6 42.8 22.5 42.1 19.9L40.9 15.5"
+      stroke="#34DCCC"
+      stroke-width="4"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  </g>
+</svg>

@@ -1,15 +1,22 @@
 <template>
   <div class="flex min-h-screen flex-col bg-surface-50">
-    <header class="border-b border-surface-200 bg-white/80 px-6 py-6 backdrop-blur">
+    <header class="border-b border-surface-200 bg-brand-sand/40 px-6 py-6 backdrop-blur">
       <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 class="text-2xl font-semibold text-surface-900">Local Ollama Chat</h1>
+        <div class="flex flex-col gap-2">
+          <AppBrand />
           <p class="text-sm text-surface-600">
-            Converse with models you have installed locally via Ollama.
+            Local models, crafted exchanges. Converse with the Ollama installs running on your machine.
+          </p>
+          <p v-if="modelError" class="text-xs font-medium text-red-600">
+            Unable to refresh model list: {{ modelError }}
           </p>
         </div>
         <div class="flex flex-wrap items-center gap-3">
-          <ModelSelector v-model="activeModel" :disabled="isLoading" />
+          <ModelSelector
+            v-model="activeModel"
+            :disabled="disableModelSelection"
+            :models="models"
+          />
           <Button
             label="Reset"
             icon="pi pi-refresh"
@@ -50,16 +57,19 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, onMounted, watch } from 'vue';
+import { storeToRefs } from 'pinia';
 
 import Button from 'primevue/button';
 import Message from 'primevue/message';
 import ProgressSpinner from 'primevue/progressspinner';
 
+import AppBrand from '@/components/AppBrand.vue';
 import ChatInput from '@/components/ChatInput.vue';
 import ChatPane from '@/components/ChatPane.vue';
 import ModelSelector from '@/components/ModelSelector.vue';
 import { useChat } from '@/composables/useChat';
+import { useModelStore } from '@/stores/modelStore';
 
 const {
   messages,
@@ -73,10 +83,32 @@ const {
   cancelRequest
 } = useChat();
 
+const modelStore = useModelStore();
+const { models, isLoading: isModelLoading, error: modelError } = storeToRefs(modelStore);
+
+onMounted(() => {
+  void modelStore.fetchModels();
+});
+
+watch(
+  models,
+  (currentModels) => {
+    if (!currentModels.length) {
+      return;
+    }
+    if (!currentModels.some((model) => model.name === selectedModel.value)) {
+      setModel(currentModels[0].name);
+    }
+  },
+  { immediate: true }
+);
+
 const activeModel = computed({
   get: () => selectedModel.value,
   set: (value: string) => setModel(value)
 });
+
+const disableModelSelection = computed(() => isLoading.value || isModelLoading.value);
 
 function handleSubmit(message: string) {
   void sendMessage(message);
